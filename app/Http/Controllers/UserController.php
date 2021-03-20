@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 
 class UserController extends Controller
@@ -51,9 +52,10 @@ class UserController extends Controller
 
                 $user->save();
                 $new_user = User::find($user->id);
-
                 $new_user->contacts_info = json_decode($new_user->contacts_info);
 
+                Log::info($new_user);
+                
                 $response[] = [
                     "user" => $new_user,
                     "status" => "OK"
@@ -64,10 +66,7 @@ class UserController extends Controller
             }
             
         }else{
-            $response[] = [
-                "api_key" => $user->api_token,
-                "status" => "password"
-            ];
+            $response = "missing_parameters";
         }
 
         return response($response);
@@ -118,9 +117,7 @@ class UserController extends Controller
             }
 
         }else{
-            $response[] = [
-                "status" => "data"
-            ];
+            $response = "Incorrect Data";
         }
 
         return response($response);
