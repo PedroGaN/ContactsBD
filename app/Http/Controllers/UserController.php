@@ -51,6 +51,9 @@ class UserController extends Controller
 
                 $user->save();
                 $new_user = User::find($user->id);
+
+                $new_user->contacts_info = json_decode($new_user->contacts_info);
+
                 $response[] = [
                     "user" => $new_user,
                     "status" => "OK"
@@ -61,7 +64,10 @@ class UserController extends Controller
             }
             
         }else{
-            $response = "missing_parameters";
+            $response[] = [
+                "api_key" => $user->api_token,
+                "status" => "password"
+            ];
         }
 
         return response($response);
@@ -112,7 +118,9 @@ class UserController extends Controller
             }
 
         }else{
-            $response = "Incorrect Data";
+            $response[] = [
+                "status" => "data"
+            ];
         }
 
         return response($response);
