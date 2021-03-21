@@ -211,12 +211,6 @@ class UserController extends Controller
                     }
                 }else {
                     
-                    if($data->name != "")
-                        $user->name = $data->name;
-                    if($data->last_name != "")
-                        $user->last_name = $data->last_name;
-                    if($data->email != "")
-                        $user->email = $data->email;
                     if($data->contacts_info != "")
                         $user->contacts_info = $data->contacts_info;
                 
