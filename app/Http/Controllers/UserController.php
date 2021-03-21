@@ -23,7 +23,8 @@ class UserController extends Controller
 
             if($checkUser){
                 $response[] = [
-                    "status" => "email"
+                    "user" => $checkUser,
+                    "status" => "EMAIL"
                 ];
 
                 return response($response);
@@ -127,7 +128,7 @@ class UserController extends Controller
     public function logoutUser(Request $request) 
     {
 
-        $response = [];
+        $response = "";
 
         $data = $request->getContent();
 
@@ -149,11 +150,11 @@ class UserController extends Controller
                     $response = $e->getMessage();
                 }
             }else{
-                $response = "error";
+                $response = "user";
             }
 
         }else{
-            $response = "data_error";
+            $response = "Incorrect Data";
         }
 
         return response($response);
@@ -176,14 +177,14 @@ class UserController extends Controller
 
                 if(Hash::check($data->password,$user->password)){
 
-                    if(isset($data->name))
+                    if($data->name != "")
                         $user->name = $data->name;
-                    if(isset($data->last_name))
+                    if($data->last_name != "")
                         $user->last_name = $data->last_name;
-                    if(isset($data->email))
+                    if($data->email != "")
                         $user->email = $data->email;
-                    if(isset($data->new_password) && $data->new_password != "")
-                        $user->password = Hash::make($data->password);
+                    if($data->contacts_info != "")
+                        $user->contacts_info = $data->contacts_info;
                     
                     try{
 
@@ -200,8 +201,11 @@ class UserController extends Controller
                         $response = $e->getMessage();
                     }
                 }else{
+                    $user->contacts_info = json_decode($user->contacts_info);
+
                     $response[] = [
-                        "status" => "auth"
+                        "user" => $user,
+                        "status" => "PASSWORD"
                     ];
                 }
 			}else{
@@ -236,20 +240,16 @@ class UserController extends Controller
 
                     $user->save();
 
-                    $response = $user;
+                    $response = "OK";
 
                }catch(\Exception $e){
                     $response = $e->getMessage();
                 }
             }else{
-                $response[] = [
-                    "status" => "user"
-                ];
+                $response = "user";
             }
         }else{
-            $response[] = [
-                "status" => "user"
-            ];
+            $response = "data";
         }
         return response($response);
     }
@@ -257,8 +257,7 @@ class UserController extends Controller
     public function deleteUser(Request $request)
     {
 
-        $response = [];
-
+        $response = "";
 
         $data = $request->getContent();
 
@@ -282,13 +281,13 @@ class UserController extends Controller
                         $response = $e->getMessage();
                     }
                 }else{
-                    $response = "auth";
+                    $response = "incorrect password";
                 }
 			}else{
-				$response = "Incorrect Data";
+				$response = "user";
 			}
 		}else{
-            $response = "user";
+            $response = "Incorrect Data";
 
 		}
         return response($response);
