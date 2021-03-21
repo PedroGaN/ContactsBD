@@ -175,8 +175,42 @@ class UserController extends Controller
 
 			if($user){
 
-                if(Hash::check($data->password,$user->password)){
+                if($data->password != ""){
+                    if(Hash::check($data->password,$user->password)){
 
+                        if($data->name != "")
+                            $user->name = $data->name;
+                        if($data->last_name != "")
+                            $user->last_name = $data->last_name;
+                        if($data->email != "")
+                            $user->email = $data->email;
+                        if($data->contacts_info != "")
+                            $user->contacts_info = $data->contacts_info;
+                        
+                        try{
+    
+                            $user->save();
+    
+                            $user->contacts_info = json_decode($user->contacts_info);
+    
+                            $response[] = [
+                                "user" => $user,
+                                "status" => "OK"
+                            ];
+    
+                       }catch(\Exception $e){
+                            $response = $e->getMessage();
+                        }
+                    }else{
+                        $user->contacts_info = json_decode($user->contacts_info);
+    
+                        $response[] = [
+                            "user" => $user,
+                            "status" => "PASSWORD"
+                        ];
+                    }
+                }else {
+                    
                     if($data->name != "")
                         $user->name = $data->name;
                     if($data->last_name != "")
@@ -185,7 +219,7 @@ class UserController extends Controller
                         $user->email = $data->email;
                     if($data->contacts_info != "")
                         $user->contacts_info = $data->contacts_info;
-                    
+                
                     try{
 
                         $user->save();
@@ -197,17 +231,11 @@ class UserController extends Controller
                             "status" => "OK"
                         ];
 
-                   }catch(\Exception $e){
+                    }catch(\Exception $e){
                         $response = $e->getMessage();
                     }
-                }else{
-                    $user->contacts_info = json_decode($user->contacts_info);
-
-                    $response[] = [
-                        "user" => $user,
-                        "status" => "PASSWORD"
-                    ];
                 }
+
 			}else{
 				$response = "Incorrect Data";
 			}
